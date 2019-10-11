@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from torch.utils.data import Dataset
 
 
@@ -11,7 +12,18 @@ class trainingDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, idx):
-        return self.X[idx], self.y[idx]
+        return self.X[idx].astype(np.float), self.y[idx]
+
+
+class testDataset(Dataset):
+    def __init__(self, df_test):
+        self.df_test = df_test
+
+    def __len__(self):
+        return len(self.df_test)
+
+    def __getitem__(self, idx):
+        return self.df_test.iloc[idx, :].values.astype(np.float)
 
 
 def main():
@@ -24,6 +36,7 @@ def main():
 
     x, y = next(iter(train_dataset))
     assert torch.Size([784]) == x.size()
+    assert torch.float == x.dtype
     assert 1.0 == y
 
 
